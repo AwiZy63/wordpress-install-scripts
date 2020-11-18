@@ -11,6 +11,8 @@ E_BADARGS=65
 MYSQL=`which mysql`
 MKDIR=`which mkdir`
 
+RESULT=`mysql -u$2 -p$3 -e "SHOW DATABASES" | grep $1`
+
 Q1="CREATE DATABASE IF NOT EXISTS $1;"
 Q2="GRANT ALL ON *.* TO '$2'@'localhost' IDENTIFIED BY '$3';"
 Q3="FLUSH PRIVILEGES;"
@@ -26,6 +28,14 @@ defaultFileName="$fileNumberDefault-wordpress.conf"
 vHostDefaultPort=80
 vHostNewPort=1799
 
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo Utilisation: "$0 [db_name] [db_user] [db_pass] [/chemin_absolue_du_dossier/]"
+  exit $E_BADARGS
+fi
+$MYSQL -uroot -p -e "$SQL"
+if "`mysql -u$2 -p$3 -e 'show databases;'`"
+then
 # Creation du vHost
 
 # Configuration du port
@@ -79,29 +89,36 @@ do
 done
     sudo echo -e $vHostText > $defaultFileName
 
+# Creation de la base de données et de son utilisateur 
 
 
-if [ $# -ne $EXPECTED_ARGS ]
-then
-  echo Utilisation: "$0 [db_name] [db_user] [db_pass] [/chemin_absolue_du_dossier/]"
-  exit $E_BADARGS
-fi
- 
-$MYSQL -uroot -p -e "$SQL"
-sudo $MKDIR $4
+
+sudo $MKDIR -p $4
 cd $4
-sudo $MKDIR test
 
+# Telechargement et installation de Wordpress
+sudo curl -O https://wordpress.org/latest.tar.gz
+sudo tar -xvf latest.tar.gz
+sudo rm latest.tar.gz
 
+cd ./wordpress/
 
-
-
-
-
+# Creation de la configuration Wordpress
+sudo mv wp-config-sample.php wp-config.php
 
 # Insertion des informations de base de données dans la config WordPress
-#sudo sed -i -e "s/database_name_here/$1/g" ./wp-config.php
-#sudo sed -i -e "s/username_here/$2/g" ./wp-config.php
-#sudo sed -i -e "s/password_here/$3/g" ./wp-config.php
+sudo sed -i -e "s/database_name_here/$1/g" ./wp-config.php
+sudo sed -i -e "s/username_here/$2/g" ./wp-config.php
+sudo sed -i -e "s/password_here/$3/g" ./wp-config.php
+
+# Attribution des droits et permissions
+sudo chown -R www-data:www-data $4wordpress
+sudo find $4wordpress/ -type d -exec chmod 750 {} \;
+sudo find $4wordpress/ -type f -exec chmod 640 {} \;
+
+
 #sudo sed -i -e "" $4/wordpress/wp-config.php
-ok "La base de donnée $1 et l'utilisateur $2 ont bien été créé, avec les mot de passe : $3 \n Wordpress a bien été installé dans le repertoire $4"
+ok "La base de donnée $1 et l'utilisateur $2 ont bien été créé, avec les mot de passe : $3 \n\n Wordpress a bien été installé dans le repertoire $4 \n\n Accedez à votre interface à partir de cette adresse : http://localhost:$vHostNewPort/"
+else
+    echo "Vos informations MySQL sont incorrectes veuillez réessayer."
+fi
