@@ -168,7 +168,37 @@ if install_directory "Choisissez"; then
     sleep 5
 fi
 
-#### RESUMER ICI ET DEMANDER SI LUTILISATEUR EST SUR
+install_confirmation() {
+
+    while true; do
+
+        read -r -p "${1} confirmer l'installation dans ce repertoire ? ${installDirectory} ? [y/N] : " responseInstallationConfirm
+
+        case "$responseInstallationConfirm" in
+        [yY][eE][sS] | [yY] | [oO][uU][iI] | [oO])
+            true
+            break
+            ;;
+        *)
+            false
+            clear
+            echo
+            echo "Annulation.."
+            sleep 0.5
+            exit
+            ;;
+        esac
+    done
+}
+
+if install_confirmation "Voulez vous"; then
+    echo
+    echo "Choix confirmer, wordpress va l'installer sur votre système"
+    echo
+    echo "Patientez 5 secondes.."
+    sleep 5
+    clear
+fi
 
 ##############################
 #   Installation Wordpress   #
