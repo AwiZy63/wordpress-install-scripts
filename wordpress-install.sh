@@ -27,7 +27,7 @@ if confirm "Voulez vous installer les dépendances ?"; then
     echo
     echo "== Installation des dépendances en cours =="
     echo
-    sudo apt update && sudo apt full-upgrade -y && sudo apt install apache2 mariadb-server php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip -y
+    sudo apt update && sudo apt install apache2 mariadb-server php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip -y
     sudo service apache2 start
     sudo service mysql start
     sudo service apache2 reload
@@ -113,7 +113,7 @@ if sql_informations "Choisissez"; then
     Q3="FLUSH PRIVILEGES;"
     SQL="${Q1}${Q2}${Q3}"
     sudo $MYSQL -u root -e "$SQL"
-    break
+    
     echo
     echo "Nom de la base de données : $sqlDB"
     echo "Nom d'utilisateur : $sqlUser"
@@ -293,9 +293,9 @@ sudo mv ${installDirectory}wordpress/wp-config-sample.php ${installDirectory}wor
 sleep 0.5
 
 # Insertion des informations de base de données dans la config WordPress
-sudo sed -i -e "s/database_name_here/$sqlDB/g" ${installDirectory}wordpress/wp-config.php
-sudo sed -i -e "s/username_here/$sqlUser/g" ${installDirectory}wordpress/wp-config.php
-sudo sed -i -e "s/password_here/$sqlPass/g" ${installDirectory}wordpress/wp-config.php
+sudo sed -i -e "s/database_name_here/${sqlDB}/g" ${installDirectory}wordpress/wp-config.php
+sudo sed -i -e "s/username_here/${sqlUser}/g" ${installDirectory}wordpress/wp-config.php
+sudo sed -i -e "s/password_here/${sqlPass}/g" ${installDirectory}wordpress/wp-config.php
 
 sleep 0.5
 
