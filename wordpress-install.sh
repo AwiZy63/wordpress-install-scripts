@@ -243,7 +243,7 @@ vHostText="
 
     <Directory ${installDirectory}wordpress/>\n
         AllowOverride All\n
-        Require all granted
+        Require all granted\n
     </Directory>\n\n
 
     ErrorLog ${APACHE_LOG_DIR}/error.log\n
@@ -297,7 +297,7 @@ sleep 0.5
 sudo sed -i -e "s/database_name_here/${sqlDB}/g" ${installDirectory}wordpress/wp-config.php
 sudo sed -i -e "s/username_here/${sqlUser}/g" ${installDirectory}wordpress/wp-config.php
 sudo sed -i -e "s/password_here/${sqlPass}/g" ${installDirectory}wordpress/wp-config.php
-
+sudo sed -i "39i\define('FS_METHOD', 'direct');\n" ${installDirectory}wordpress/wp-config.php
 sleep 0.5
 
 # Attribution des droits et permissions
@@ -320,7 +320,7 @@ sleep 0.5
 
 sleep 1.5
 
-clear
+#clear
 
 echo
 echo "==========================================================="
