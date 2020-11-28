@@ -241,8 +241,9 @@ vHostText="
     ServerAdmin webmaster@localhost\n
     DocumentRoot ${installDirectory}wordpress\n\n
 
-    <Directory ${installDirectory}wordpress>\n
+    <Directory ${installDirectory}wordpress/>\n
         AllowOverride All\n
+        Require all granted
     </Directory>\n\n
 
     ErrorLog ${APACHE_LOG_DIR}/error.log\n
@@ -304,10 +305,16 @@ sudo chown -R www-data:www-data ${installDirectory}wordpress
 sudo find ${installDirectory}wordpress/ -type d -exec chmod 750 {} \;
 sudo find ${installDirectory}wordpress/ -type f -exec chmod 640 {} \;
 
+sudo chown -R www-data:www-data ${installDirectory}
+sudo chmod -R 755 ${installDirectory}
+
 # Activation du vHost et redemarrage du service Apache2
 sleep 0.5
 sudo a2ensite ${defaultFileName}
 sleep 0.5
+sudo a2dismod mpm_event
+sudo a2enmod php7.4
+sudo a2enmod rewrite
 sudo service apache2 restart
 sleep 0.5
 
